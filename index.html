@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#1b2f55">
+<title>Three.js 디지털 트윈 실습 | 메인</title>
+<meta name="description" content="Three.js로 만든 스마트 교실·전기버스 조립공장 3D 디지털 트윈 실습 모음">
+<style>
+:root{
+  --head-1:#172a4d;--head-2:#22427a;
+  --bg:#f2f5f9;--card:#ffffff;--line:#dfe6ef;--line-strong:#c9d6e6;
+  --text:#1b2638;--sub:#55637a;--muted:#8592a6;
+  --blue:#2f6fe0;--blue-dark:#1f57c4;--blue-soft:#eaf2ff;--blue-line:#bcd3fb;
+  --violet-soft:#f1ecff;--violet:#5b45b8;--green:#1f9d74;--green-soft:#e6f6ef;--amber:#b7791f;--amber-soft:#fff6e3;
+  --radius:18px;--mono:"D2Coding","JetBrains Mono",Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:Pretendard,"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;line-height:1.6}
+a{color:inherit}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid #8fb6ff;outline-offset:2px}
+code{font-family:var(--mono);font-size:.88em;background:#eef2f8;border:1px solid #e1e8f2;border-radius:6px;padding:1px 6px}
+
+/* 헤더 */
+.top{background:linear-gradient(100deg,var(--head-1),var(--head-2));color:#fff;padding:22px 32px 26px}
+.top .eyebrow{font-size:13px;font-weight:800;letter-spacing:.08em;color:#c9dafb}
+.top h1{margin:6px 0 6px;font-size:clamp(26px,3.4vw,40px);font-weight:800;letter-spacing:-.03em;line-height:1.2}
+.top p{margin:0;font-size:14px;color:#dbe6fa}
+
+/* 레이아웃 */
+.layout{display:grid;grid-template-columns:280px minmax(0,1fr);min-height:calc(100vh - 131px)}
+.side{background:#fff;border-right:1px solid var(--line);padding:26px 20px;position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto}
+.side h2{font-size:13px;color:var(--sub);margin:0 0 14px 8px;font-weight:800}
+.nav{display:flex;flex-direction:column;gap:8px;list-style:none;margin:0;padding:0}
+.nav a{display:grid;grid-template-columns:30px 1fr;gap:12px;align-items:center;text-decoration:none;padding:12px;border-radius:14px;border:1px solid transparent;transition:.15s}
+.nav a:hover{background:#f5f8fc}
+.nav .num{width:30px;height:30px;border-radius:9px;background:#eef2f7;color:var(--sub);display:grid;place-items:center;font-size:12px;font-weight:800}
+.nav b{display:block;font-size:16px;font-weight:600}
+.nav small{display:block;font-size:12.5px;color:var(--sub);line-height:1.5}
+.nav a[aria-current="page"]{background:var(--blue-soft);border-color:var(--blue-line)}
+.nav a[aria-current="page"] .num{background:var(--blue);color:#fff}
+.nav a[aria-current="page"] b{color:var(--blue-dark);font-weight:800}
+.nav a[aria-current="page"] small{color:#24427c;font-weight:700}
+.side-note{margin-top:22px;padding:14px;border-radius:14px;background:#f7f9fc;border:1px solid var(--line);font-size:12.5px;color:var(--sub)}
+.side-note strong{display:block;color:var(--text);margin-bottom:6px;font-size:13px}
+.side-note pre{margin:8px 0 0;font-family:var(--mono);font-size:11.5px;white-space:pre-wrap;word-break:break-all;line-height:1.7;color:#35445c}
+
+/* 본문 카드 */
+main{padding:30px 50px 60px;max-width:1080px;width:100%}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:30px;box-shadow:0 1px 2px rgba(20,40,80,.03)}
+.card+.card,.grid2+.card,.card+.grid2{margin-top:18px}
+.grid2>.card{margin-top:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.kicker{font-size:12.5px;font-weight:800;letter-spacing:.06em;color:var(--blue)}
+.hero h2{margin:8px 0 12px;font-size:clamp(24px,2.6vw,32px);font-weight:800;letter-spacing:-.03em}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.chip{font-size:12.5px;font-weight:700;padding:4px 11px;border-radius:999px;background:var(--blue-soft);color:var(--blue-dark);border:1px solid var(--blue-line)}
+.chip.code{font-family:var(--mono);font-weight:600;background:var(--violet-soft);color:var(--violet);border-color:#dcd2fb;border-radius:8px}
+.chip.green{background:var(--green-soft);color:var(--green);border-color:#bfe8d6}
+.hero p{margin:0;color:var(--sub)}
+.card h3{margin:0 0 14px;font-size:16px;font-weight:800}
+.card p{margin:0}
+.card ol,.card ul{margin:0;padding-left:20px}
+.card li{margin:0 0 8px;color:var(--text)}
+.card li::marker{color:var(--sub)}
+.feature-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;list-style:none;padding:0!important}
+.feature-list li{margin:0;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fafcfe;font-size:14px}
+.feature-list li b{display:block;font-size:13.5px;margin-bottom:2px}
+.feature-list li span{color:var(--sub);font-size:13px}
+
+/* 실행 영역 */
+.run-box{border:1px solid #d6e3f6;background:linear-gradient(180deg,#f6f9ff,#eef4fd);border-radius:14px;padding:22px}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line-strong);background:#fff;color:var(--text);padding:12px 18px;border-radius:12px;font-size:15px;font-weight:700;text-decoration:none;transition:.15s}
+.btn:hover{border-color:var(--blue);color:var(--blue-dark)}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.primary:hover{background:var(--blue-dark);color:#fff}
+.btn[hidden]{display:none}
+.status{margin-top:16px;background:#fff;border-left:4px solid #8db1f2;border-radius:10px;padding:14px 16px;color:#33435c;font-size:15px}
+.status.ok{border-left-color:var(--green)}
+.status.warn{border-left-color:var(--amber);background:var(--amber-soft)}
+.preview{margin-top:16px;border-radius:12px;overflow:hidden;border:1px solid var(--line-strong);background:#0b1820;aspect-ratio:16/9;min-height:360px}
+.preview[hidden]{display:none}
+.preview iframe{display:block;width:100%;height:100%;border:0}
+.keys{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.keys span{font-size:13px;color:var(--sub);background:#f4f7fb;border:1px solid var(--line);border-radius:8px;padding:5px 10px}
+.keys kbd{font-family:var(--mono);font-size:12px;background:#fff;border:1px solid var(--line-strong);border-bottom-width:2px;border-radius:5px;padding:0 5px;margin-right:4px;color:var(--text)}
+.pager{display:flex;justify-content:space-between;gap:10px;margin-top:22px}
+footer{margin-top:28px;font-size:12.5px;color:var(--muted)}
+
+@media(max-width:980px){
+  main{padding:24px 22px 50px}
+  .layout{grid-template-columns:240px minmax(0,1fr)}
+}
+@media(max-width:760px){
+  .top{padding:18px 18px 20px}
+  .layout{display:block}
+  .side{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line);padding:16px}
+  .nav{flex-direction:row;overflow-x:auto}
+  .nav a{min-width:230px}
+  .side-note{display:none}
+  main{padding:18px 14px 40px}
+  .card{padding:22px 18px}
+  .grid2,.feature-list{grid-template-columns:1fr}
+  .preview{min-height:260px;aspect-ratio:4/5}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="eyebrow">THREE.JS DIGITAL TWIN LAB · INTERACTIVE PROJECTS</div>
+  <h1>Three.js 3D 디지털 트윈 실습</h1>
+  <p>개념 이해 → 실행 → 관찰 → 응용 | Three.js · OrbitControls · 절차적 3D 모델링</p>
+</header>
+
+<div class="layout">
+  <aside class="side" aria-label="실습 목록">
+    <h2>학습 단계</h2>
+    <ul class="nav" id="nav"></ul>
+    <div class="side-note">
+      <strong>저장소 파일 구성</strong>
+      아래 세 파일을 같은 폴더(저장소 루트)에 두면 버튼으로 바로 실행됩니다.
+      <pre>index.html
+smart_classroom_camera_stable.html
+ThreeJS_한국_시내버스_조립공장_3D.html</pre>
+    </div>
+  </aside>
+
+  <main id="main" tabindex="-1">
+    <section class="card hero" aria-labelledby="title">
+      <div class="kicker" id="kicker"></div>
+      <h2 id="title"></h2>
+      <div class="chips" id="chips"></div>
+      <p id="summary"></p>
+    </section>
+
+    <div class="grid2">
+      <section class="card">
+        <h3>① 핵심 개념</h3>
+        <p id="concept"></p>
+      </section>
+      <section class="card">
+        <h3>② 실습 순서</h3>
+        <ol id="steps"></ol>
+      </section>
+    </div>
+
+    <section class="card">
+      <h3>③ 직접 실행하기</h3>
+      <div class="run-box">
+        <div class="actions">
+          <a class="btn primary" id="open" target="_blank" rel="noopener">▶ 새 탭에서 실행</a>
+          <button class="btn" id="previewBtn" type="button" aria-expanded="false">이 화면에서 미리보기</button>
+          <button class="btn" id="fullBtn" type="button" hidden>⤢ 전체 화면</button>
+        </div>
+        <div class="status" id="status" role="status">아직 실행하지 않았습니다.</div>
+        <div class="preview" id="preview" hidden></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>④ 주요 기능</h3>
+      <ul class="feature-list" id="features"></ul>
+    </section>
+
+    <section class="card">
+      <h3>⑤ 조작 방법</h3>
+      <div class="keys" id="keys"></div>
+    </section>
+
+    <nav class="pager" aria-label="이전·다음 실습">
+      <a class="btn" id="prevLink">← 이전 실습</a>
+      <a class="btn" id="nextLink">다음 실습 →</a>
+    </nav>
+
+    <footer>3D 장면은 Three.js를 CDN(jsDelivr)에서 불러오므로 인터넷 연결이 필요합니다. 모든 센서값·공정 데이터는 교육용 가상 데이터입니다.</footer>
+  </main>
+</div>
+
+<script>
+/* 실습 목록: 새 실습을 추가할 때는 이 배열에 항목 하나만 더하면 됩니다. */
+const LESSONS = [
+  {
+    id: 'classroom',
+    file: 'smart_classroom_camera_stable.html',
+    name: 'Smart Classroom',
+    short: '스마트 학교 교실 디지털 트윈',
+    area: '공간 디지털 트윈',
+    title: '스마트 학교 교실 디지털 트윈',
+    chips: [['공간 디지털 트윈',''],['IoT 시뮬레이션','green'],['Three.js r164','code']],
+    summary: '실사풍 3D 교실에서 온도·CO₂·조도·재실 인원을 가상 센서로 시뮬레이션하고, 설비를 조절하면 3D 장면과 데이터가 함께 바뀐다.',
+    concept: '디지털 트윈은 실제 공간을 3D로 복제하고 센서 데이터와 연결해 상태를 관찰·제어하는 모델이다. 이 실습은 재실 인원·환기·조명·블라인드 값으로 CO₂, 실내 온도, 조도를 계산해 KPI 카드, 3D 라벨, 전자칠판, 추이 차트에 동시에 반영한다.',
+    steps: [
+      '[새 탭에서 실행]을 눌러 교실 전체 시점을 확인한다.',
+      '시나리오에서 [집중 환기]를 눌러 CO₂ 추이 차트가 내려가는 것을 관찰한다.',
+      '재실 인원 24명, 환기 0%로 바꾸고 1,000ppm 경고가 뜨는지 확인한다.',
+      '[권장 설정 적용]을 눌러 환기·조명이 자동 조정되는 것을 비교한다.',
+      '[센서 CSV]로 시뮬레이션 기록을 내려받아 표로 분석한다.'
+    ],
+    features: [
+      ['가상 IoT 센서 4종','온도 · CO₂ · 조도 · 재실 인원'],
+      ['설비 제어 슬라이더 6개','인원 · 자연광 · 목표 온도 · 환기 · LED · 블라인드'],
+      ['수업 상황 4가지','수업 중 · 쉬는 시간 · 집중 환기 · 야간 소등'],
+      ['카메라 시점 5가지','교실 전체 · 학생 · 전자칠판 · 창가 · 평면 조망'],
+      ['카메라 안정화','시점 범위 제한 · 벽 자동 절개 · 그래픽 복구'],
+      ['데이터 내보내기','장면 JSON · 센서 CSV · 3D 화면 PNG']
+    ],
+    keys: [['드래그','회전'],['휠','확대·축소'],['우클릭','이동']]
+  },
+  {
+    id: 'bus',
+    file: 'ThreeJS_한국_시내버스_조립공장_3D.html',
+    name: 'Bus Assembly',
+    short: '한국형 전기버스 3D 조립공장',
+    area: '제조 디지털 트윈',
+    title: '한국형 저상 전기버스 3D 조립공장',
+    chips: [['제조 디지털 트윈',''],['8단계 조립 공정','green'],['Three.js r180','code']],
+    summary: '스마트팩토리 조립라인에서 저상 전기 시내버스가 섀시부터 품질 검사까지 8단계로 조립되는 과정을 3D로 따라간다.',
+    concept: '제조 공정을 모듈 단위로 나누면 각 부품이 어느 단계에서, 어디에 결합되는지 한눈에 볼 수 있다. 이 실습은 섀시 → 차축 → 배터리·구동계 → 차체 골격 → 외판 → 창문·도어 → 실내 → 품질 검사 순서로 부품이 날아와 결합되며, 부품을 클릭하면 역할 설명이 나타난다.',
+    steps: [
+      '[새 탭에서 실행] 후 [자동 실행]을 눌러 8단계 조립을 처음부터 끝까지 관찰한다.',
+      '왼쪽 공정 목록에서 03 배터리·전기 구동계를 고르고 배터리를 클릭해 설명을 읽는다.',
+      '[X-RAY]를 켜고 [실내] 시점으로 좌석·손잡이 배치를 확인한다.',
+      '노선 색상(간선·지선·광역·순환)을 바꿔 차체 도장을 비교한다.',
+      '[분해 보기]로 모듈 위치를 펼친 뒤 [화면 저장]으로 PNG를 남긴다.'
+    ],
+    features: [
+      ['8단계 조립 공정','자동 실행 · 이전/다음 · 재생 속도 조절'],
+      ['카메라 시점 7가지','사선 · 측면 · 전면 · 후면 · 실내 · 상부 · 하부'],
+      ['X-RAY · 분해 보기','외판 반투명 · 모듈 펼치기'],
+      ['부품 클릭 설명','선택 강조 · 설치 단계 표시'],
+      ['노선 색상 4종','서울 시내버스 간선·지선·광역·순환'],
+      ['관제 패널','진행률 KPI · 이벤트 로그 · PNG 저장']
+    ],
+    keys: [['Space','자동 실행'],['← →','단계 이동'],['드래그','회전'],['휠','확대·축소'],['Esc','메뉴 닫기']]
+  }
+];
+
+const $ = id => document.getElementById(id);
+let current = 0;
+
+function buildNav(){
+  $('nav').innerHTML = LESSONS.map((l,i)=>`
+    <li><a href="#${l.id}" data-i="${i}">
+      <span class="num">${String(i+1).padStart(2,'0')}</span>
+      <span><b>${l.name}</b><small>${l.short}</small></span>
+    </a></li>`).join('');
+}
+
+function closePreview(){
+  $('preview').replaceChildren();          // iframe 제거 → 3D 렌더링(GPU) 중지
+  $('preview').hidden = true;
+  $('previewBtn').textContent = '이 화면에서 미리보기';
+  $('previewBtn').setAttribute('aria-expanded','false');
+  $('fullBtn').hidden = true;
+}
+
+function render(i, focus){
+  current = i;
+  const l = LESSONS[i];
+  document.title = `${l.title} | Three.js 디지털 트윈 실습`;
+  document.querySelectorAll('#nav a').forEach(a=>{
+    if(Number(a.dataset.i)===i) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
+  });
+  $('kicker').textContent = `STEP ${String(i+1).padStart(2,'0')} · ${l.area}`;
+  $('title').textContent = l.title;
+  $('chips').innerHTML = l.chips.map(([t,c])=>`<span class="chip ${c}">${t}</span>`).join('');
+  $('summary').textContent = l.summary;
+  $('concept').textContent = l.concept;
+  $('steps').innerHTML = l.steps.map(s=>`<li>${s.replace(/\[([^\]]+)\]/g,'<b>[$1]</b>')}</li>`).join('');
+  $('features').innerHTML = l.features.map(([b,s])=>`<li><b>${b}</b><span>${s}</span></li>`).join('');
+  $('keys').innerHTML = l.keys.map(([k,d])=>`<span><kbd>${k}</kbd>${d}</span>`).join('');
+  $('open').href = encodeURI(l.file);
+  closePreview();
+  checkFile(l);
+
+  const prev = LESSONS[i-1], next = LESSONS[i+1];
+  $('prevLink').hidden = !prev; $('nextLink').hidden = !next;
+  if(prev) $('prevLink').href = '#'+prev.id;
+  if(next) $('nextLink').href = '#'+next.id;
+  if(focus) $('main').focus({preventScroll:false});
+}
+
+/* 파일이 저장소에 실제로 있는지 확인(GitHub Pages·로컬 서버에서 동작, file://에서는 생략) */
+async function checkFile(l){
+  const s = $('status');
+  s.className = 'status';
+  s.textContent = `실행 파일: ${l.file}`;
+  if(location.protocol === 'file:') return;
+  try{
+    const r = await fetch(encodeURI(l.file), {method:'HEAD', cache:'no-store'});
+    if(LESSONS[current] !== l) return;
+    if(r.ok){ s.className='status ok'; s.textContent = `✓ 실행 준비 완료 · ${l.file}`; }
+    else { s.className='status warn'; s.textContent = `⚠ ${l.file} 파일을 찾을 수 없습니다 (HTTP ${r.status}). index.html과 같은 폴더에 올렸는지, 파일명이 정확한지 확인하세요.`; }
+  }catch(e){ /* 네트워크 제한 시 안내만 유지 */ }
+}
+
+$('previewBtn').addEventListener('click',()=>{
+  const box = $('preview');
+  if(!box.hidden){ closePreview(); return; }
+  const l = LESSONS[current];
+  const f = document.createElement('iframe');
+  f.src = encodeURI(l.file);
+  f.title = l.title + ' 3D 미리보기';
+  f.allow = 'fullscreen';
+  f.loading = 'lazy';
+  box.replaceChildren(f);
+  box.hidden = false;
+  $('previewBtn').textContent = '미리보기 닫기';
+  $('previewBtn').setAttribute('aria-expanded','true');
+  $('fullBtn').hidden = false;
+  $('status').className = 'status ok';
+  $('status').textContent = '미리보기를 불러왔습니다. 3D 장면이 뜰 때까지 몇 초 걸릴 수 있습니다.';
+});
+$('fullBtn').addEventListener('click',()=>{ const f=$('preview').querySelector('iframe'); (f?.requestFullscreen||f?.webkitRequestFullscreen)?.call(f); });
+
+function fromHash(focus){
+  const i = LESSONS.findIndex(l=>'#'+l.id === location.hash);
+  render(i<0 ? 0 : i, focus);
+}
+window.addEventListener('hashchange',()=>fromHash(true));
+buildNav();
+fromHash(false);
+</script>
+</body>
+</html>
